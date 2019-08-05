@@ -12,6 +12,14 @@ bot = cmd.Bot(command_prefix=';', help_command=DefaultPaginatorHelp(),
 bot.load_extension('jishaku')
 
 
+@bot.group()
+@cmd.check(lambda ctx: ctx.author.guild_permissions.administrator)
+async def cfg(ctx, command):
+    """Change the settings on a command"""
+    if ctx.invoked_subcommand is None:
+        await ctx.send("Command does not exist or is not configurable")
+
+
 @bot.command()
 async def uwu(ctx, *, text):
     """Change any text to UwU-speak"""
@@ -31,7 +39,7 @@ Press ❌ to vote NO
 *Vote Count:*'''.format(ctx.author.display_name, member.display_name, reason))
     await message.add_reaction('✅')
     await message.add_reaction('❌')
-    await sleep(3)  # 170
+    await sleep(3)  # 590
     await ctx.trigger_typing()
     await sleep(10)
     message = dis.utils.get(ctx.channel, id=message.id)
@@ -42,9 +50,15 @@ Press ❌ to vote NO
         await ctx.send("❌ Vote Failed")
 
 
+@bot.command(name="kick", parent="cfg")
+async def kick_cfg(ctx):
+    pass
+
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, cmd.CommandNotFound):
         await ctx.send("Error: Command not found")
+    else:
+        await ctx.send(error)
 
 bot.run(token)
