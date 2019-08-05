@@ -39,7 +39,11 @@ Press ❌ to vote NO
     message = dis.utils.get(ctx.channel, id=message.id)
     if message.reactions[0].count > message.reactions[1].count:
         await ctx.send("✅ Vote Passed\nKicking member: " + member.display_name)
-        # lock user to hidden channel temporarily?
+        for role in ctx.guild.roles:
+            if role.name == "Kicked":
+                await member.add_roles(role, reason="Vote kick")
+            elif role.name == "Member":
+                await member.remove_roles(role, reason="Vote kick")
     else:
         await ctx.send("❌ Vote Failed")
 
