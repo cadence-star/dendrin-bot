@@ -6,7 +6,7 @@ confused = [" (o_O)?", " (°ロ°) !?", " (ーー;)?", " owo?"]
 sparkles = [" \\*:･ﾟ✧\\*:･ﾟ✧ ", " ☆\\*:・ﾟ ", "〜☆ ", " uguu.., ", "-.-"]
 
 
-def uwu_word(word):
+async def uwu_word(word):
     end = ''
     # randomly change punctuation to kaomoji
     if word[-1] in ',.?!':

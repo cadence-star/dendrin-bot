@@ -10,14 +10,7 @@ logging.basicConfig(level=logging.INFO)
 bot = cmd.Bot(command_prefix=';', help_command=DefaultPaginatorHelp(),
               activity=dis.Activity(name=";help", type=dis.ActivityType.watching))
 bot.load_extension('jishaku')
-
-
-@bot.group()
-@cmd.check(lambda ctx: ctx.author.guild_permissions.administrator)
-async def cfg(ctx, command):
-    """Change the settings on a command"""
-    if ctx.invoked_subcommand is None:
-        await ctx.send("Command does not exist or is not configurable")
+bot.load_extension('admin')
 
 
 @bot.command()
@@ -25,10 +18,11 @@ async def uwu(ctx, *, text):
     """Change any text to UwU-speak"""
     text = text.replace("fuck", "fwick").replace("shit", "poopoo").replace("bitch", "meanie").replace(
         "ass", "butt").replace("father", "daddy")
-    await ctx.send(' '.join([uwu_word(word) for word in text.lower().split()]))
+    await ctx.send(' '.join([await uwu_word(word) for word in text.lower().split()]))
 
 
 @bot.command()
+@cmd.guild_only()
 async def kick(ctx, member: dis.Member, *, reason="(no reason given)"):
     """Calls a vote on whether to kick a member"""
     message = await ctx.send('''*{} wants to call a vote:*
@@ -49,10 +43,6 @@ Press ❌ to vote NO
     else:
         await ctx.send("❌ Vote Failed")
 
-
-@bot.command(name="kick", parent="cfg")
-async def kick_cfg(ctx):
-    pass
 
 @bot.event
 async def on_command_error(ctx, error):
