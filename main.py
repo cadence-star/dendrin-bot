@@ -5,6 +5,7 @@ import logging
 from jishaku.help_command import DefaultPaginatorHelp
 from uwu import uwu_word
 from secret import token
+import helpers
 
 logging.basicConfig(level=logging.INFO)
 bot = cmd.Bot(command_prefix=';', help_command=DefaultPaginatorHelp(),
@@ -53,6 +54,6 @@ async def on_command_error(ctx, error):
     if isinstance(error, cmd.CommandNotFound):
         await ctx.send("Error: Command not found")
     else:
-        await ctx.send(error)
+        helpers.handle_default(ctx, error)
 
 bot.run(token)
