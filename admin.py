@@ -37,6 +37,7 @@ class Admin(cmd.Cog):
 
     @kick.command()
     async def setup(self, ctx):
+        ctx.send("Setting up...")
         for role in ctx.guild.roles:
             try:
                 perms = role.permissions
@@ -53,6 +54,7 @@ class Admin(cmd.Cog):
         await ctx.guild.create_text_channel("kick-zone", overwrites={
             ctx.guild.default_role: dis.PermissionOverwrite(read_messages=False),
             role2: dis.PermissionOverwrite(read_messages=True)}, reason="Kick command setup")
+        ctx.send("Done!")
 
     @kick.error
     async def kick_err(self, ctx, error):
