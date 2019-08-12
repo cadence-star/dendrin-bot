@@ -28,7 +28,7 @@ class Admin(cmd.Cog):
             await ctx.send(
                 "You must have the Administrator permission or a role called \"Bot Manager\" to use this command.")
         else:
-            helpers.handle_default(ctx, error)
+            await helpers.handle_default(ctx, error)
 
     @cfg.group(name="kick")
     async def kick(self, ctx):
@@ -60,7 +60,7 @@ class Admin(cmd.Cog):
             await ctx.send(
                 'Error: I must have the "Manage Roles" and "Manage Channels" permissions to run this command.')
         else:
-            helpers.handle_default(ctx, error)
+            await helpers.handle_default(ctx, error)
 
     @kick.command()
     async def teardown(self, ctx):
