@@ -28,11 +28,11 @@ Press ❌ to vote NO
 *Vote Count:*'''.format(ctx.author.display_name, member.display_name, reason))
         await message.add_reaction('✅')
         await message.add_reaction('❌')
-        await sleep(590)
+        await sleep(50)
         await ctx.trigger_typing()
         await sleep(10)
         message = await ctx.channel.fetch_message(message.id)
-        if message.reactions[0].count > message.reactions[1].count:
+        if message.reactions[0].count > message.reactions[1].count + 1:
             await ctx.send("✅ Vote Passed\nKicking member: " + member.display_name)
             for role in ctx.guild.roles:
                 if role.name == "Kicked":
