@@ -12,7 +12,8 @@ class Fun(cmd.Cog):
     async def uwu(self, ctx, *, text):
         """Change any text to UwU-speak"""
         text = text.replace("fuck", "fwick").replace("shit", "poopoo").replace("bitch", "meanie").replace(
-            "ass", "butt").replace("father", "daddy")
+            "ass", "butt").replace("father", "daddy").replace("god", "gosh").replace("damn", "darn").replace(
+            "idiot", "dumb-face")
         await ctx.send(' '.join([await uwu_word(word) for word in text.lower().split()]))
 
     @cmd.command()
@@ -20,11 +21,11 @@ class Fun(cmd.Cog):
     async def kick(self, ctx, member: dis.Member, *, reason="(no reason given)"):
         """Calls a vote on whether to kick a member"""
         message = await ctx.send('''*{} wants to call a vote:*
-    **Kick member: {}?**
-    **{}**
-    Press ✅ to vote YES
-    Press ❌ to vote NO
-    *Vote Count:*'''.format(ctx.author.display_name, member.display_name, reason))
+**Kick member: {}?**
+**{}**
+Press ✅ to vote YES
+Press ❌ to vote NO
+*Vote Count:*'''.format(ctx.author.display_name, member.display_name, reason))
         await message.add_reaction('✅')
         await message.add_reaction('❌')
         await sleep(590)

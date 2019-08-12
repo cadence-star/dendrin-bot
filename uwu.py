@@ -8,6 +8,16 @@ sparkles = [" \\*:･ﾟ✧\\*:･ﾟ✧ ", " ☆\\*:・ﾟ ", "〜☆ ", " uguu
 
 async def uwu_word(word):
     end = ''
+    veryEnd = ''
+    # ignore non-letter endings
+    prefix = True
+    for i in range(len(word)):
+        if prefix and word[i].isalpha():
+            prefix = False
+        elif not prefix and not word[i].isalpha():
+            veryEnd = word[i:]
+            word = word[:i]
+            break
     # randomly change punctuation to kaomoji
     if word[-1] in ',.?!':
         end = word[-1]
@@ -33,7 +43,7 @@ async def uwu_word(word):
         end = word[-3:] + end
         word = word[:-3]
     # uwu
-    word = word.replace('l', 'w').replace('r', 'w') + end
+    word = word.replace('l', 'w').replace('r', 'w') + end + veryEnd
     # random stutter
     if len(word) > 2 and word[0].isalpha() and random.random() < 0.17:
         word = word[0] + '-' + word
