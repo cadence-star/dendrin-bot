@@ -46,8 +46,7 @@ Press ❌ to vote NO
 
             # get info from database
             con = sqlite3.connect("guild.db")
-            ids = con.execute("SELECT member_role, kicked_role FROM guild WHERE id=?",
-                              (ctx.guild.id,)).fetchone()
+            ids = con.execute("SELECT member_role, kicked_role FROM guild WHERE id=?", (ctx.guild.id,)).fetchone()
             con.close()
 
             # don't do anything if kick has not been set up in this guild
@@ -56,19 +55,12 @@ Press ❌ to vote NO
 
             # send member to kick channel
             try:
-                await member.add_roles(ids[1], reason="Vote kick")
-                await member.remove_roles(ids[0], reason="Vote kick")
+                await member.add_roles(ctx.guild.get_role(ids[1]), reason="Vote kick")
+                await member.remove_roles(ctx.guild.get_role(ids[0]), reason="Vote kick")
             except dis.Forbidden:
                 pass
         else:
             await ctx.send("❌ Vote Failed")
-
-    @kick.error
-    async def kick_err(self, ctx, error):
-        if isinstance(error, cmd.BotMissingPermissions):
-            await ctx.send('Error: I must have the "Add Reactions" permission to run this command.')
-        else:
-            await helpers.handle_default(ctx, error)
 
 
 def setup(bot):

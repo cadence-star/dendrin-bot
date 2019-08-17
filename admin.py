@@ -34,13 +34,21 @@ class Admin(cmd.Cog):
     @cfg.group(name="kick")
     async def kick(self, ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.send("Use `;cfg kick setup` to set up the kick command.")
+            await ctx.send("Use `;help cfg kick` to see the configuration options.")
 
     @kick.command()
     @cmd.bot_has_permissions(manage_roles=True, manage_channels=True)
     async def setup(self, ctx):
-        ctx.send("Setting up...")
+        await ctx.send("Setting up...")
         reason = "Kick command setup"
+
+        # check if kick command is already set up
+        con = sqlite3.connect("guild.db")
+        ids = con.execute("SELECT member_role FROM guild WHERE id=?", (ctx.guild.id,)).fetchone()
+        if None not in ids:
+            con.close()
+            await ctx.send("The kick command is already set up!")
+            return
 
         # remove read_messages perm from every role
         for role in ctx.guild.roles:
@@ -71,37 +79,29 @@ class Admin(cmd.Cog):
             kicked_role: dis.PermissionOverwrite(read_messages=True)}, reason=reason)
 
         # save ids to database
-        con = sqlite3.connect("guild.db")
         con.execute("UPDATE guild SET member_role=?, kicked_role=?, kick_channel=? WHERE id=?",
                     (member_role.id, kicked_role.id, kick_channel.id, ctx.guild.id))
         con.commit()
         con.close()
 
-        ctx.send("Done!")
-
-    @kick.error
-    async def kick_err(self, ctx, error):
-        if isinstance(error, cmd.BotMissingPermissions):
-            await ctx.send(
-                'Error: I must have the "Manage Roles" and "Manage Channels" permissions to run this command.')
-        else:
-            await helpers.handle_default(ctx, error)
+        await ctx.send("Done!")
 
     @kick.command()
+    @cmd.bot_has_permissions(manage_roles=True, manage_channels=True)
     async def teardown(self, ctx):
-        ctx.send("Tearing down...")
+        await ctx.send("Tearing down...")
         reason = "Kick command teardown"
 
         # get ids from database and remove
         con = sqlite3.connect("guild.db")
         ids = con.execute("SELECT member_role, kicked_role, kick_channel FROM guild WHERE id=?",
-                          ctx.guild.id).fetchone()
-        if ids is None:
-            ctx.send("The kick command is not set up in this server!")
+                          (ctx.guild.id,)).fetchone()
+        if None in ids:
             con.close()
+            await ctx.send("The kick command is not set up in this server!")
             return
-        con.execute("UPDATE guild SET member_role=?, kicked_role=?, kick_channel=? WHERE id=?",
-                    (None, None, None, ctx.guild.id))
+        con.execute("UPDATE guild SET member_role=NULL, kicked_role=NULL, kick_channel=NULL WHERE id=?",
+                    (ctx.guild.id,))
         con.commit()
         con.close()
 
@@ -115,23 +115,13 @@ class Admin(cmd.Cog):
         await ctx.guild.get_role(ids[1]).delete(reason=reason)
         await ctx.guild.get_role(ids[0]).delete(reason=reason)
 
-        ctx.send("Done!")
+        await ctx.send("Done!")
 
     @cmd.command()
     async def leave(self, ctx):
         """Makes the bot leave the server"""
         await ctx.send("oof")
         await ctx.guild.leave()
-
-    @cmd.command()
-    @cmd.is_owner()
-    async def upgrade(self, ctx):
-        # temp command for existing guilds
-        con = sqlite3.connect("guild.db")
-        con.execute("INSERT INTO guild (id) VALUES (?)", (ctx.guild.id,))
-        con.commit()
-        con.close()
-        await ctx.send("Successfully upgraded guild")
 
 
 def setup(bot):
