@@ -128,10 +128,10 @@ class Admin(cmd.Cog):
     async def upgrade(self, ctx):
         # temp command for existing guilds
         con = sqlite3.connect("guild.db")
-        con.execute("INSERT INTO guild (id) VALUES (?)")
+        con.execute("INSERT INTO guild (id) VALUES (?)", (ctx.guild.id,))
         con.commit()
         con.close()
-        ctx.send("Successfully upgraded guild")
+        await ctx.send("Successfully upgraded guild")
 
 
 def setup(bot):

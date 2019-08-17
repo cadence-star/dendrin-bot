@@ -34,7 +34,7 @@ async def on_command_error(ctx, error):
 @bot.event
 async def on_guild_join(guild):
     con = sqlite3.connect('guild.db')
-    con.execute("INSERT INTO guild (id) VALUES (?)", guild.id)
+    con.execute("INSERT INTO guild (id) VALUES (?)", (guild.id,))
     con.commit()
     con.close()
 
@@ -42,9 +42,9 @@ async def on_guild_join(guild):
 @bot.event
 async def on_member_join(member):
     con = sqlite3.connect('guild.db')
-    roleID = con.execute("SELECT member_role FROM guild WHERE id=?", member.guild.id).fetchone()[0]
+    roleID = con.execute("SELECT member_role FROM guild WHERE id=?", (member.guild.id,)).fetchone()[0]
     con.close()
     if roleID is not None:
-        member.add_roles(member.guild.get_role(roleID))
+        await member.add_roles(member.guild.get_role(roleID))
 
 bot.run(token)

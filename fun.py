@@ -47,7 +47,7 @@ Press ❌ to vote NO
             # get info from database
             con = sqlite3.connect("guild.db")
             ids = con.execute("SELECT member_role, kicked_role FROM guild WHERE id=?",
-                              ctx.guild.id).fetchone()
+                              (ctx.guild.id,)).fetchone()
             con.close()
 
             # don't do anything if kick has not been set up in this guild
