@@ -37,8 +37,20 @@ class Admin(cmd.Cog):
             await ctx.send("Use `;help cfg kick` to see the configuration options.")
 
     @kick.command()
+    async def time(self, ctx, seconds: int):
+        """Set the voting time (default 1 minute)"""
+        if seconds < 10:
+            await ctx.send("Error: voting time must be at least 10 seconds.")
+            return
+        con = sqlite3.connect("guild.db")
+        con.execute("UPDATE guild SET kick_vote_time=? WHERE id=?", (seconds, ctx.guild.id))
+        con.close()
+        await ctx.send("Set voting time to " + str(seconds) + " seconds.")
+
+    @kick.command()
     @cmd.bot_has_permissions(manage_roles=True, manage_channels=True)
     async def setup(self, ctx):
+        """Set up the advanced version of the kick command"""
         await ctx.send("Setting up...")
         reason = "Kick command setup"
 
@@ -89,6 +101,7 @@ class Admin(cmd.Cog):
     @kick.command()
     @cmd.bot_has_permissions(manage_roles=True, manage_channels=True)
     async def teardown(self, ctx):
+        """Revert to the basic kick command"""
         await ctx.send("Tearing down...")
         reason = "Kick command teardown"
 

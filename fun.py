@@ -23,6 +23,13 @@ class Fun(cmd.Cog):
     @cmd.bot_has_permissions(add_reactions=True)
     async def kick(self, ctx, member: dis.Member, *, reason="(no reason given)"):
         """Calls a vote on whether to kick a member"""
+
+        # get vote time from database
+        con = sqlite3.connect("guild.db")
+        time = con.execute("SELECT kick_vote_time FROM guild WHERE id=?", (ctx.guild.id,)).fetchone()[0]
+        con.close()
+
+        # call vote
         message = await ctx.send('''*{} wants to call a vote:*
 **Kick member: {}?**
 **{}**
@@ -32,8 +39,8 @@ Press ❌ to vote NO
         await message.add_reaction('✅')
         await message.add_reaction('❌')
 
-        # wait 1 minute
-        await sleep(50)
+        # wait default 1 minute
+        await sleep((time or 60) - 10)
         await ctx.trigger_typing()
         await sleep(10)
 
