@@ -15,7 +15,7 @@ class Fun(cmd.Cog):
         """Change any text to UwU-speak"""
         text = text.replace("fuck", "fwick").replace("shit", "poopoo").replace("bitch", "meanie").replace(
             "ass", "butt").replace("father", "daddy").replace("god", "gosh").replace("damn", "darn").replace(
-            "idiot", "dumb-face")
+            "idiot", "baka")
         await ctx.send(' '.join([await uwu_word(word) for word in text.lower().split()]))
 
     @cmd.command()

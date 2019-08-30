@@ -43,7 +43,10 @@ class Admin(cmd.Cog):
             await ctx.send("Error: voting time must be at least 10 seconds.")
             return
         con = sqlite3.connect("guild.db")
-        con.execute("UPDATE guild SET kick_vote_time=? WHERE id=?", (seconds, ctx.guild.id))
+        if seconds == 60:
+            con.execute("UPDATE guild SET kick_vote_time=NULL WHERE id=?", (ctx.guild.id,))
+        else:
+            con.execute("UPDATE guild SET kick_vote_time=? WHERE id=?", (seconds, ctx.guild.id))
         con.close()
         await ctx.send("Set voting time to " + str(seconds) + " seconds.")
 
